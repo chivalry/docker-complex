@@ -7,3 +7,14 @@ before_install:
 
 script:
   - docker run chivalrysoft/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t chivalrysoft/multi-client ./client
+  - docker build -t chivalrysoft/multi-nginx ./nginx
+  - docker build -t chivalrysoft/multi-server ./server
+  - docker build -t chivalrysoft/multi-worker ./worker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push chivalrysoft/multi-client
+  - docker push chivalrysoft/multi-nginx
+  - docker push chivalrysoft/multi-server
+  - docker push chivalrysoft/multi-worker
