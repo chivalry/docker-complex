@@ -1,0 +1,27 @@
+name: Delpoy MultiDocker
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: >
+          docker login -u "${{ secrets.DOCKER_USERNAME }}" \
+          -p "${{ secrets.DOCKER_PASSWORD }}"
+      - run: >
+          docker build -t chivalrysoft/react-test \
+          -f ./client/Dockerfile.dev ./client
+      - run: docker run -e CI=true chivalrysoft/react-test npm test
+
+      - run: docker build -t chivalrysoft/multi-client-10-14 ./client
+      - run: docker build -t chivalrysoft/multi-nginx-10-14 ./nginx
+      - run: docker build -t chivalrysoft/multi-server-10-14 ./server
+      - run: docker build -t chivalrysoft/multi-worker-10-14 ./worker
+      
+      - run: docker push chivalrysoft/multi-client-10-14
+      - run: docker push chivalrysoft/multi-nginx-10-14
+      - run: docker push chivalrysoft/multi-server-10-14
+      - run: docker push chivalrysoft/multi-worker-10-14
