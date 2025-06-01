@@ -18,3 +18,16 @@ after_success:
   - docker push chivalrysoft/multi-nginx
   - docker push chivalrysoft/multi-server
   - docker push chivalrysoft/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-east-2
+  app: multi-docker
+  env: Multi-docker-env
+  bucket_name: elasticbeanstalk-us-east-2-399404566115
+  bucket_path: docker-multi
+  on:
+    branch: main
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
